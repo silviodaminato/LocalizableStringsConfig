@@ -13,8 +13,8 @@ if CommandLine.arguments.count < 2 {
 	exit(1)
 }
 
-//let writeFilePath = "LocalizableStringKey.swift"
-var writeFilePath = "LocalizableStringKey.swift"
+var writeFilePath = "LocalizedString.swift"
+
 if CommandLine.arguments.count > 2 {
 	writeFilePath = CommandLine.arguments[2]
 }
@@ -27,14 +27,17 @@ dateFormatter.timeStyle = .short
 
 var enumString =
 	"//\n" +
-		"//  LocalizableStringsConfig.swift\n" +
+		"//  LocalizedString.swift\n" +
 		"//  Generated automatically by create_localizable_strings\n" +
 		"//  https://github.com/silviodaminato/LocalizableStringsConfig\n" +
 		"//\n" +
 		"//  Created by 2Specials on " + dateFormatter.string(from: Date()) + ".\n" +
 		"//  Copyright © 2018 2Specials SRL. All rights reserved.\n" +
 		"//\n\n" +
-"enum LocalizableStringKey : String {\n"
+//"enum LocalizableStringKey : String {\n"
+
+"import Foundation\n\n" +
+"class LocalizedString {\n\n"
 
 do {
 	let data = try String(contentsOfFile: path, encoding: .utf8)
@@ -46,13 +49,17 @@ do {
 				let value = substrings[1]
 				let key = value.toCamelCase
 				
-				let spacesCount = 50 - key.count
-				let spaces = String(repeating: " ", count: spacesCount > 1 ? spacesCount : 1)
+//				let spacesCount = 50 - key.count
+//				let spaces = String(repeating: " ", count: spacesCount > 1 ? spacesCount : 1)
+//				enumString = enumString + "\tcase \(key)\(spaces)= \"\(value)\"\n"
 				
-				enumString = enumString + "\tcase \(key)\(spaces)= \"\(value)\"\n"
+				enumString = enumString + "\tpublic class var \(key): String {\n\t\treturn localize(key: \"\(value)\")\n\t}\n\n"
 			}
 		}
 	}
+	
+	enumString = enumString + "\tprivate static func localize(key: String) -> String {\n" +
+	"\t\treturn NSLocalizedString(key, comment:\"\")\n\t}\n\n"
 	
 	enumString = enumString + "}"
 	
