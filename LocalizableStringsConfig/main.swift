@@ -28,7 +28,8 @@ dateFormatter.timeStyle = .short
 var enumString =
 	"//\n" +
 		"//  ViewController.swift\n" +
-		"//  Nice-ProView\n" +
+		"//  Generated automatically by create_localizable_strings\n" +
+		"//  https://github.com/silviodaminato/LocalizableStringsConfig\n" +
 		"//\n" +
 		"//  Created by 2Specials on " + dateFormatter.string(from: Date()) + ".\n" +
 		"//  Copyright © 2018 2Specials SRL. All rights reserved.\n" +
@@ -42,8 +43,13 @@ do {
 		if string.hasPrefix("\"") {
 			let substrings = string.components(separatedBy: "\"")
 			if substrings.count > 1 {
-				let key = substrings[1]
-				enumString = enumString + "\tcase " + key + "\n"
+				let value = substrings[1]
+				let key = value.toCamelCase
+				
+				let spacesCount = 50 - key.count
+				let spaces = String(repeating: " ", count: spacesCount > 1 ? spacesCount : 1)
+				
+				enumString = enumString + "\tcase \(key)\(spaces)= \"\(value)\"\n"
 			}
 		}
 	}
