@@ -27,7 +27,7 @@ dateFormatter.timeStyle = .short
 
 var enumString =
 	"//\n" +
-		"//  ViewController.swift\n" +
+		"//  LocalizableStringsConfig.swift\n" +
 		"//  Generated automatically by create_localizable_strings\n" +
 		"//  https://github.com/silviodaminato/LocalizableStringsConfig\n" +
 		"//\n" +
