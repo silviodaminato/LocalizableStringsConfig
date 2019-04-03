@@ -8,35 +8,53 @@
 
 import Foundation
 
-if CommandLine.arguments.count < 2 {
-	print("[ERROR] Unexpected number of arguments")
+let android = "android"
+let ios = "ios"
+
+if CommandLine.arguments.count < 3 {
+	print("[ERROR] Unexpected number of arguments - [PLATFORM - INPUT PATH - OUTPUT PATH")
 	exit(1)
 }
 
-//let writeFilePath = "LocalizableStringKey.swift"
-var writeFilePath = "LocalizableStringKey.swift"
-if CommandLine.arguments.count > 2 {
-	writeFilePath = CommandLine.arguments[2]
+let platform = CommandLine.arguments[1]
+if platform != android && platform != ios {
+    print("[ERROR] Unexpected platform \(platform) - android or ios")
+    exit(1)
 }
 
-let path = CommandLine.arguments[1]
+let inputPath = CommandLine.arguments[2]
+
+var writeFilePath = platform == ios ? "LocalizationKeys.swift" : "LocalizationKeys.java"
+if CommandLine.arguments.count > 3 {
+	writeFilePath = CommandLine.arguments[3]
+}
 
 let dateFormatter = DateFormatter()
 dateFormatter.dateStyle = .short
 dateFormatter.timeStyle = .short
 
-var enumString =
-	"//\n" +
-		"//  LocalizableStringsConfig.swift\n" +
-		"//  Generated automatically by create_localizable_strings\n" +
-		"//\n" +
-		"//  Created by Developer on " + dateFormatter.string(from: Date()) + ".\n" +
-		"//  Copyright © 2019 Santander. All rights reserved.\n" +
-		"//\n\n" +
-"enum LocalizableStringKey : String {\n"
+var enumString = ""
+if platform == ios {
+    enumString =
+        "//\n" +
+        "//  LocalizationKeys.swift\n" +
+        "//  Generated automatically by create_localizable_strings\n" +
+        "//\n" +
+        "//  Created by Developer on " + dateFormatter.string(from: Date()) + ".\n" +
+        "//  Copyright © 2019 Intesys. All rights reserved.\n" +
+        "//\n\n" +
+    "enum LocalizationKeys : String {\n"
+} else if platform == android {
+    enumString = """
+    package it.santanderconsumerbank.dealerapp.commons;\n
+    import org.jetbrains.annotations.NotNull;\n
+    import it.intesys.ytranslation.LocalizableItem;\n
+    public enum LocalizationKeys implements LocalizableItem {\n
+    """
+}
 
 do {
-	let data = try String(contentsOfFile: path, encoding: .utf8)
+	let data = try String(contentsOfFile: inputPath, encoding: .utf8)
 	let myStrings = data.components(separatedBy: .newlines)
 	for string in myStrings {
 		if string.hasPrefix("\"") {
@@ -52,12 +70,30 @@ do {
                 //                let spacesCount = 50 - key.count
                 //                let spaces = String(repeating: " ", count: spacesCount > 1 ? spacesCount : 1)
                 // enumString = enumString + "\tcase \(key)\(spaces)= \"\(value)\"\n"
-                enumString = enumString + "\tcase \(key)\n" 
+                if platform == ios {
+                    enumString += "\tcase \(key)\n"
+                } else if platform == android {
+                    enumString += "\t\(key),\n"
+                }
 			}
 		}
 	}
 	
-	enumString = enumString + "}"
+    if platform == ios {
+        enumString += "}"
+    } else if platform == android {
+        enumString += """
+        \n
+        \t;
+        \n
+        \t@NotNull
+        \t@Override
+        \tpublic String getName() {
+        \t\treturn this.name();
+        \t}
+        }
+        """
+    }
 	
 //	print(enumString)
 	
