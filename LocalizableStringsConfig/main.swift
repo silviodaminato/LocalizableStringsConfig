@@ -29,10 +29,9 @@ var enumString =
 	"//\n" +
 		"//  LocalizableStringsConfig.swift\n" +
 		"//  Generated automatically by create_localizable_strings\n" +
-		"//  https://github.com/silviodaminato/LocalizableStringsConfig\n" +
 		"//\n" +
-		"//  Created by 2Specials on " + dateFormatter.string(from: Date()) + ".\n" +
-		"//  Copyright © 2018 2Specials SRL. All rights reserved.\n" +
+		"//  Created by Developer on " + dateFormatter.string(from: Date()) + ".\n" +
+		"//  Copyright © 2019 Santander. All rights reserved.\n" +
 		"//\n\n" +
 "enum LocalizableStringKey : String {\n"
 
@@ -44,12 +43,16 @@ do {
 			let substrings = string.components(separatedBy: "\"")
 			if substrings.count > 1 {
 				let value = substrings[1]
-				let key = value.toCamelCase
-				
-				let spacesCount = 50 - key.count
-				let spaces = String(repeating: " ", count: spacesCount > 1 ? spacesCount : 1)
-				
-				enumString = enumString + "\tcase \(key)\(spaces)= \"\(value)\"\n"
+				// let key = value.toCamelCase
+                var key = value
+                let splittedStrings = key.components(separatedBy: ".")
+                if let last = splittedStrings.last {
+                    key = last
+                }
+                //                let spacesCount = 50 - key.count
+                //                let spaces = String(repeating: " ", count: spacesCount > 1 ? spacesCount : 1)
+                // enumString = enumString + "\tcase \(key)\(spaces)= \"\(value)\"\n"
+                enumString = enumString + "\tcase \(key)\n" 
 			}
 		}
 	}
