@@ -55,25 +55,24 @@ if platform == ios {
 
 do {
 	let data = try String(contentsOfFile: inputPath, encoding: .utf8)
-	let myStrings = data.components(separatedBy: .newlines)
+    let myStrings = data.components(separatedBy: .newlines)
+    var arrayOfKeysAdded: [String] = [String]()
 	for string in myStrings {
 		if string.hasPrefix("\"") {
 			let substrings = string.components(separatedBy: "\"")
 			if substrings.count > 1 {
-				let value = substrings[1]
-				// let key = value.toCamelCase
-                var key = value
+                var key = substrings[1]
                 let splittedStrings = key.components(separatedBy: ".")
                 if let last = splittedStrings.last {
                     key = last
                 }
-                //                let spacesCount = 50 - key.count
-                //                let spaces = String(repeating: " ", count: spacesCount > 1 ? spacesCount : 1)
-                // enumString = enumString + "\tcase \(key)\(spaces)= \"\(value)\"\n"
-                if platform == ios {
-                    enumString += "\tcase \(key)\n"
-                } else if platform == android {
-                    enumString += "\t\(key),\n"
+                if !arrayOfKeysAdded.contains(key) {
+                    if platform == ios {
+                        enumString += "\tcase \(key)\n"
+                    } else if platform == android {
+                        enumString += "\t\(key),\n"
+                    }
+                    arrayOfKeysAdded.append(key)
                 }
 			}
 		}
